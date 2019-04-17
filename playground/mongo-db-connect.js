@@ -1,4 +1,7 @@
-const MongoClient = require('mongodb').MongoClient;
+const { MongoClient, ObjectID } = require('mongodb');
+
+const oid = new ObjectID();
+console.log(oid);
 
 MongoClient.connect('mongodb://localhost:27017/TodoApp',{useNewUrlParser : true},(err,client)=>{
     if(err){
@@ -20,7 +23,9 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',{useNewUrlParser : true}
                 console.log(`Ah! Snap! An Error occurred writing documment(s) into the collection ${collection.s.name}`);
                 return;
             }
-            console.log(`${result.insertedCount} record(s) successfully inserted into ${collection.s.name} collection:\n${JSON.stringify(result.ops,undefined,2)} `)
+            // console.log(`${result.insertedCount} record(s) successfully inserted into ${collection.s.name} collection:\n${JSON.stringify(result.ops,undefined,2)} `)
+            console.log(result.ops[0]._id.getTimestamp());
+
         })
     })
     db.collection('Users',(err,collection)=>{
@@ -37,7 +42,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',{useNewUrlParser : true}
                 console.log(`Ah! Snap! An Error occurred writing documment(s) into the collection ${collection.s.name}`);
                 return;
             }
-            console.log(`${result.insertedCount} record(s) successfully inserted into ${collection.s.name} collection:\n${JSON.stringify(result.ops,undefined,2)} `)
+            // console.log(`${result.insertedCount} record(s) successfully inserted into ${collection.s.name} collection:\n${JSON.stringify(result.ops,undefined,2)} `)
+            console.log(result.ops[0]._id.getTimestamp());
         })
     })
     client.close();
