@@ -4,6 +4,7 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',{ useNewUrlParser : true
     if(error){
         console.log('Ah! Snap! An error ocurred connecting to the database servers!');
     }
+    console.log('Successfully connected to the database servers!'); 
     const db = client.db();
     db.collection('Todos',(err,collection)=>{
         if(err){

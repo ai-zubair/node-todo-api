@@ -36,7 +36,8 @@ MongoClient.connect('mongodb://localhost:27017/TodoApp',{useNewUrlParser : true}
         collection.insertOne({
             name: 'zubair',
             email: 'zubair@gmail.com',
-            password : 'thisIsJustMe'
+            password : 'thisIsJustMe',
+            age:24
         },(err,result)=>{
             if(err){
                 console.log(`Ah! Snap! An Error occurred writing documment(s) into the collection ${collection.collectionName}`);
