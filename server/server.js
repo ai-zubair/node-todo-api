@@ -11,7 +11,15 @@ app.use(bodyParser.json());
 
 app.post('/todos',(req,res,next)=>{
     console.log(req.body);
-    res.send('success!')
+    const newTodo = new Todos({
+        text : req.body.text,
+        status : req.body.status
+    })
+    newTodo.save().then((todo)=>{
+        res.send(`Your todo has been successfully saved\n${todo}`)
+    }).catch((err)=>{
+        res.status(400).send('Ah! Snap! An error ocurred saving the response!')
+    })
 })
 
 app.listen(3000,()=>{
