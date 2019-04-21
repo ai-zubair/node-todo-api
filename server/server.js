@@ -7,8 +7,11 @@ const { Users } = require('./db-models/users');
 
 var app =  express();
 
+app.use(bodyParser.json());
+
 app.post('/todos',(req,res,next)=>{
-    res.send('Congrats its a success!')
+    console.log(req.body);
+    res.send('success!')
 })
 
 app.listen(3000,()=>{
