@@ -10,7 +10,6 @@ var app =  express();
 app.use(bodyParser.json());
 
 app.post('/todos',(req,res,next)=>{
-    console.log(req.body);
     const newTodo = new Todos({
         text : req.body.text,
         status : req.body.status
@@ -18,7 +17,7 @@ app.post('/todos',(req,res,next)=>{
     newTodo.save().then((todo)=>{
         res.send(`Your todo has been successfully saved\n${todo}`)
     }).catch((err)=>{
-        res.status(400).send('Ah! Snap! An error ocurred saving the response!')
+        res.status(400).send(`Ah! Snap! An error ocurred saving the response!\n${err}`)
     })
 })
 
