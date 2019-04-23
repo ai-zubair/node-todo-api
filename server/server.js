@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const { mongoose } = require('./db/mongoose');
+const { mongoose } = require('./db/mongoose'); //requiring the confgiured mongoose variable
 const { Todos } = require('./db-models/todos');
 const { Users } = require('./db-models/users');
 
@@ -22,7 +22,9 @@ app.post('/todos',(req,res,next)=>{
 })
 
 app.get('/todos',(req,res,next)=>{
-    Todos.find().then( todos=>{
+    Todos.find({
+        text: 'sending test todo from the post man'
+    }).then( todos=>{
         res.send({
             todos
         })
