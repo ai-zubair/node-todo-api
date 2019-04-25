@@ -7,7 +7,7 @@ const { Users } = require('../server/db-models/users');
 const id = 'cbb85b6eeca8020e8977cfb';
 
 if(!ObjectID.isValid(id)){
-    console.log("Invalid oid")
+    console.log("Invalid oid");
 }
 
 Todos.find({

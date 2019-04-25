@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { ObjectID } = require('mongodb');
 
 const { mongoose } = require('./db/mongoose'); //requiring the confgiured mongoose variable
 const { Todos } = require('./db-models/todos');
@@ -22,14 +23,27 @@ app.post('/todos',(req,res,next)=>{
 })
 
 app.get('/todos',(req,res,next)=>{
-    Todos.find({
-        text: 'sending test todo from the post man'
-    }).then( todos=>{
+    Todos.find().then( todos=>{
         res.send({
             todos
         })
     }).catch((err)=>{
         res.status(400).send(`Ah! Snap! An error ocurred saving the response!\n${err}`)
+    })
+})
+
+app.get('/todos/:id',(req,res,next)=>{
+    const taskID = req.params.id;
+    if(!ObjectID.isValid(taskID)){
+        res.status(404).send();
+    }
+    Todos.findById(taskID).then((task)=>{
+        if(!task){
+            res.status(404).send()
+        }
+        res.status(200).send(task);
+    }).catch((err)=>{
+        res.status(400).send();
     })
 })
 
