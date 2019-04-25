@@ -6,6 +6,8 @@ const { mongoose } = require('./db/mongoose'); //requiring the confgiured mongoo
 const { Todos } = require('./db-models/todos');
 const { Users } = require('./db-models/users');
 
+const PORT = process.env.PORT || 3000
+
 var app =  express();
 
 app.use(bodyParser.json());
@@ -47,6 +49,6 @@ app.get('/todos/:id',(req,res,next)=>{
     })
 })
 
-app.listen(3000,()=>{
-    console.log('Server has been fired at localhost:3000')
+app.listen(PORT,()=>{
+    console.log(`Server has been fired at localhost:${PORT}`)
 })
