@@ -30,6 +30,7 @@ app.post('/todos',(req,res,next)=>{
 
 //set up GET route for fetching todos from the todos collection
 app.get('/todos',(req,res,next)=>{
+    res.send('You have made it');
     Todos.find().then( todos=>{
         res.send({
             todos
