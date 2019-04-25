@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 
 //connecting to a mongo db server and tapping into the specified db
-mongoose.connect("mongodb://localhost:27017/TodoApp",{useNewUrlParser : true})
+mongoose.connect(process.env.MONGOLAB_URI||'mongodb://localhost:27017',{useNewUrlParser : true})
 
 //exporting the configured mongoose variable
 module.exports = {
