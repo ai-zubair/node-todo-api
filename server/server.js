@@ -39,15 +39,31 @@ app.get('/todos',(req,res,next)=>{
     })
 })
 
-//set up GET route for fetching todo for a given  id
+//set up GET route for fetching todo for a given id
 app.get('/todos/:id',(req,res,next)=>{
     const taskID = req.params.id;
     if(!ObjectID.isValid(taskID)){
-        res.status(404).send();
+        res.status(404).send("Oops! Looks like you entered an invalid ID");
     }
     Todos.findById(taskID).then((task)=>{
         if(!task){
-            res.status(404).send()
+            res.status(404).send("Oops! No such records were found!")
+        }
+        res.status(200).send(task);
+    }).catch((err)=>{
+        res.status(400).send();
+    })
+})
+
+//set up delete route for deleting a given todo using id
+app.delete('/todos/:id',(req,res,next)=>{
+    const taskID = req.params.id;
+    if(!ObjectID.isValid(taskID)){
+        res.status(204).send("Oops! Looks like you entered an invalid ID");
+    }
+    Todos.findByIdAndDelete(taskID).then((task)=>{
+        if(!task){
+            res.status(204).send("Oops! No such records were found!")
         }
         res.status(200).send(task);
     }).catch((err)=>{
