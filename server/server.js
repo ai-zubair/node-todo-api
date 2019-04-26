@@ -22,7 +22,7 @@ app.post('/todos',(req,res,next)=>{
         status : req.body.status
     })
     newTodo.save().then((todo)=>{
-        res.send(`Your todo has been successfully saved @ ${todo._id.getTimestamp()}\n${todo}`)
+        res.send(`Your todo has been saved successfully @ ${todo._id.getTimestamp()}\n${todo}`)
     }).catch((err)=>{
         res.status(400).send(`Ah! Snap! An error ocurred saving the response!\n${err}`)
     })
