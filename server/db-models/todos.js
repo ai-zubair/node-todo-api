@@ -11,6 +11,10 @@ const todosSchema = new mongoose.Schema({
     status : {
         type: Boolean,
         default : false
+    },
+    completedAt:{
+        type : String,
+        default : 'Not completed yet'
     }
 })
 //creating a model for the todo collection to attach the schema to all of its documents

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser'); //parse request bodies on to the request object as req.body
 const { ObjectID } = require('mongodb'); //validate the object id passed in the URL
@@ -49,7 +50,7 @@ app.get('/todos/:id',(req,res,next)=>{
         if(!task){
             res.status(404).send("Oops! No such records were found!")
         }
-        res.status(200).send(task);
+        res.status(200).send({task});
     }).catch((err)=>{
         res.status(400).send();
     })
@@ -63,10 +64,32 @@ app.delete('/todos/:id',(req,res,next)=>{
     }
     Todos.findByIdAndDelete(taskID).then((task)=>{
         if(!task){
-            res.status(204).send("Oops! No such records were found!")
+            res.status(204).send("Oops! No such task were found!")
         }
-        res.status(200).send(task);
+        res.status(200).send({task});
     }).catch((err)=>{
+        res.status(400).send();
+    })
+})
+
+//set up path route for updating a resource by id
+app.patch('/todos/:id',(req,res,next)=>{
+    const taskID = req.params.id;
+    const reqBody = _.pick(req.body,['status','text']);
+    if(!ObjectID.isValid(taskID)){
+        res.status(204).send("Oops! Looks like you entered an invalid ID");
+    } 
+    if(_.isBoolean(reqBody.status)&&reqBody.status===true){
+        reqBody.completedAt = Date();
+    }else{
+        reqBody.status = false ; 
+    }
+    Todos.findByIdAndUpdate(taskID,{ $set : reqBody }, { new : true } ).then( updatedTask =>{
+        if(!updatedTask){
+            res.status(204).send("No such task was found")
+        }
+        res.status(200).send({updatedTask});
+    }).catch(err=>{
         res.status(400).send();
     })
 })
