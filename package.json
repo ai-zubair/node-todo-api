@@ -22,6 +22,7 @@
     "express": "^4.16.4",
     "lodash": "^4.17.11",
     "mongodb": "^3.2.3",
-    "mongoose": "^5.5.2"
+    "mongoose": "^5.5.2",
+    "validator": "^10.11.0"
   }
 }
