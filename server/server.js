@@ -1,3 +1,10 @@
+const env = process.env.NODE_ENV;
+
+if(env === 'development'){
+    process.env.PORT = 3000;
+    process.env.MONGOLAB_URI = "mongodb://localhost:27017/TodoApp"
+}
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser'); //parse request bodies on to the request object as req.body
@@ -8,7 +15,7 @@ const { Todos } = require('./db-models/todos'); //Todos model for the db
 const { Users } = require('./db-models/users'); //Users model for the db
 
 //configuring the prot for heroku
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT;
 
 //create the express appp
 var app =  express();
