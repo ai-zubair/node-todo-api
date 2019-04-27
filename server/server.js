@@ -101,6 +101,21 @@ app.patch('/todos/:id',(req,res,next)=>{
     })
 })
 
+//set up a post route for adding new users to the db
+app.post('/users',(req,res,next)=>{
+    const reqBody = _.pick(req.body,['email','password']);
+    const newUser = new Users(reqBody);
+    newUser.save().then( user =>{
+        res.status(200).send(`Congrats you've been successfully registered.`)
+    }).catch( err => {
+        console.log(JSON.stringify(err,undefined,2));
+        if(err.code === 11000 ){
+            res.status(400).send(`Oops! Looks like a user with email ${reqBody.email} is already registered!`)
+        }
+        res.status(400).send(`Ah! Snap! An error occurred registering the user!\n${err}`)
+    })
+})
+
 //set up the server to listen for connections on the specified port
 app.listen(PORT,()=>{
     console.log(`Server has been fired at localhost:${PORT}`)
