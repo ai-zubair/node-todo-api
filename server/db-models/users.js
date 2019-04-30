@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
         minlength : 1,
         trim : true,
         unique : true,
-        validate:{
+        validate : {
             validator : isEmail,
             message: props => `${props.value} is not a valid email.`
         }
