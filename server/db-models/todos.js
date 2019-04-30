@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 //creating a schema for the documents of the todo collection
-const todosSchema = new mongoose.Schema({
+const TodosSchema = new mongoose.Schema({
     text:{
         type: String,
         minlength : 1,
@@ -18,7 +18,7 @@ const todosSchema = new mongoose.Schema({
     }
 })
 //creating a model for the todo collection to attach the schema to all of its documents
-const Todos = mongoose.model('Todos', todosSchema);
+const Todos = mongoose.model('Todos', TodosSchema);
 
 module.exports = {
     Todos

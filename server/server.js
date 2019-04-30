@@ -102,13 +102,14 @@ app.patch('/todos/:id',(req,res,next)=>{
 })
 
 //set up a post route for adding new users to the db
-app.post('/users',(req,res,next)=>{
+app.post('/users',(req,res)=>{
     const reqBody = _.pick(req.body,['email','password']);
     const newUser = new Users(reqBody);
-    newUser.save().then( user =>{
-        res.status(200).send(`Congrats you've been successfully registered.`)
+    newUser.save().then(()=>{
+        return newUser.generateAuthToken();
+    }).then((token)=>{
+        res.header({ 'x-auth' : token }).send( newUser );
     }).catch( err => {
-        console.log(JSON.stringify(err,undefined,2));
         if(err.code === 11000 ){
             res.status(400).send(`Oops! Looks like a user with email ${reqBody.email} is already registered!`)
         }

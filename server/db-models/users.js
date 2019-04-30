@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const isEmail =  require('validator/lib/isEmail');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 //creating a schema for the documents of the users collection
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     email : {
         type : String,
         required : true,
@@ -33,8 +35,28 @@ const userSchema = new mongoose.Schema({
         }
     ]
 })
+
+UserSchema.methods.generateAuthToken = function (){
+    const user = this ; //reference for the current user
+    const access = 'auth';
+    const token = jwt.sign({ _id : user._id.toHexString() , access },'abc123abc'); //create the token property from the payload
+
+    //save the token for the user
+    user.tokens.push({
+        access,
+        token
+    });
+
+    return user.save().then(() => token); //to prevent handling of save() redundantly
+}
+
+UserSchema.methods.toJSON = function () {
+    const user = this ;
+    return _.pick(user,['_id','email'])
+}
+
 //creating a users model
-const Users = mongoose.model('Users',userSchema);
+const Users = mongoose.model('Users',UserSchema);
 
 module.exports = {
     Users
