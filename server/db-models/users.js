@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const isEmail =  require('validator/lib/isEmail');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 //creating a schema for the documents of the users collection
 const UserSchema = new mongoose.Schema({
@@ -36,6 +37,7 @@ const UserSchema = new mongoose.Schema({
     ]
 })
 
+//user instance method to geerate a jwt whenever a user either signs up or logs in
 UserSchema.methods.generateAuthToken = function (){
     const user = this ; //reference for the current user
     const access = 'auth';
@@ -50,10 +52,13 @@ UserSchema.methods.generateAuthToken = function (){
     return user.save().then(() => token); //to prevent handling of save() redundantly
 }
 
+//overriding the default toJSON method for user instances to show only the desired properties to the user
 UserSchema.methods.toJSON = function () {
     const user = this ;
     return _.pick(user,['_id','email'])
 }
+
+//user model method to find a user specific to the token provided as a request header
 UserSchema.statics.findByToken = function(token) {
     const Users = this;
     var decodedToken;
@@ -68,6 +73,19 @@ UserSchema.statics.findByToken = function(token) {
         'tokens.access' : 'auth'
     })
 }
+
+//tap on to the save event to hash the passwords before being saed to the db
+UserSchema.pre('save',function(next){
+    const user = this ;
+    if(user.isModified('password')){
+        bcrypt.hash(user.password,10,(err,hash)=>{
+            user.password = hash;
+            next();
+        })
+    }else{
+        next();
+    }
+})
 //creating a users model
 const Users = mongoose.model('Users',UserSchema);
 
