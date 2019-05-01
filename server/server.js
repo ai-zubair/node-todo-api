@@ -13,6 +13,7 @@ const { ObjectID } = require('mongodb'); //validate the object id passed in the 
 const { mongoose } = require('./db/mongoose'); //requiring the confgiured mongoose variable
 const { Todos } = require('./db-models/todos'); //Todos model for the db
 const { Users } = require('./db-models/users'); //Users model for the db
+const { authenticate } = require('./middleware/authenticate'); //Auth middleware for verifying o user token
 
 //configuring the prot for heroku
 const PORT = process.env.PORT;
@@ -115,6 +116,11 @@ app.post('/users',(req,res)=>{
         }
         res.status(400).send(`Ah! Snap! An error occurred registering the user!\n${err}`)
     })
+})
+
+//set up aprivate route for the app
+app.get('/users/me',authenticate,(req,res)=>{
+    res.send(req.user);
 })
 
 //set up the server to listen for connections on the specified port
