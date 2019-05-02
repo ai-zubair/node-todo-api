@@ -41,7 +41,7 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.generateAuthToken = function (){
     const user = this ; //reference for the current user
     const access = 'auth';
-    const token = jwt.sign({ _id : user._id.toHexString() , access },'abc123abc'); //create the token property from the payload
+    const token = jwt.sign({ _id : user._id.toHexString() , access },process.env.JWT_SECRET); //create the token property from the payload
 
     //save the token for the user
     user.tokens.push({
@@ -63,7 +63,7 @@ UserSchema.statics.findByToken = function(token) {
     const Users = this;
     var decodedToken;
     try{
-        decodedToken = jwt.verify(token,'abc123abc')
+        decodedToken = jwt.verify(token,process.env.JWT_SECRET)
     }catch(err){
         return Promise.reject('Auth token verification failed!');
     }
