@@ -1,7 +1,3 @@
-// if(env === 'development'){
-//     process.env.PORT = 3000;
-//     process.env.MONGOLAB_URI = "mongodb://localhost:27017/TodoApp"
-// }
 require('./config/config');
 const _ = require('lodash');
 const express = require('express');
