@@ -32,7 +32,7 @@ app.post('/todos',authenticateToken,(req,res,next)=>{
         status : req.body.status
     })
     newTodo.save().then((todo)=>{
-        res.send(`Your todo has been saved successfully @ ${todo._id.getTimestamp()}\n${todo}`)
+        res.send(todo)
     }).catch((err)=>{
         res.status(400).send(`Ah! Snap! An error ocurred saving the response!\n${err}`)
     })
@@ -42,7 +42,7 @@ app.post('/todos',authenticateToken,(req,res,next)=>{
 app.get('/todos',authenticateToken,(req,res,next)=>{
     Todos.find({
         _creator : req.user._id
-    }).then( todos=>{
+    }).then( todos =>{
         res.send({
             todos
         })
