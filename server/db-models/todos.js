@@ -24,7 +24,7 @@ const TodosSchema = new mongoose.Schema({
 //over-ride the toJSON instance method for the todo instances
 TodosSchema.methods.toJSON = function(){
     const todo = this;
-    return _.pick(todo,['text','status']);
+    return _.pick(todo,['_id','text','status']);
 }
 //creating a model for the todo collection to attach the schema to all of its documents
 const Todos = mongoose.model('Todos', TodosSchema);
