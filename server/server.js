@@ -21,35 +21,19 @@ const PORT = process.env.PORT;
 //create the express appp
 var app =  express();
 
-//using the body parser middleware function to parse request bodies as JSON strings into JS objects
+//using the body parser middleware function to parse request bodies as json
 app.use(bodyParser.json());
 
-//set up POST route for adding todos to the TODO's collection for the database
-app.post('/todos',authenticateToken,(req,res,next)=>{
-    const user = req.user;
-    const newTodo = _.pick(req.body,['title','status']);
-    Todos.findOne({ _creator : user._id }).then( userTodos =>{
-        if(userTodos){
-            //push the new todo into the user's todos collections
-            return userTodos.update({
-                $push:{
-                    savedTodos : newTodo
-                }
-            }).then(()=>Promise.resolve(newTodo))
-        }else{
-            //create a todos collection for the user with the specfied todo as the first one
-            const todos = new Todos({
-                _creator : user._id,
-                savedTodos : [ newTodo ]
-            })
-            return todos.save().then(()=>Promise.resolve(newTodo));
-        }
-    }).then( savedTodo => {
-        console.log(savedTodo)
-        res.status(200).send(savedTodo);
-    }).catch(err=>{
-        console.log(err);
-        res.status(400).send("An error occurred saving the todo!")        
+//set up POST route for adding todos to the TODO's collectio for the database
+app.post('/todos',(req,res,next)=>{
+    const newTodo = new Todos({
+        text : req.body.text,
+        status : req.body.status
+    })
+    newTodo.save().then((todo)=>{
+        res.send(`Your todo has been saved successfully @ ${todo._id.getTimestamp()}\n${todo}`)
+    }).catch((err)=>{
+        res.status(400).send(`Ah! Snap! An error ocurred saving the response!\n${err}`)
     })
 })
 
@@ -152,7 +136,7 @@ app.post('/users/login',(req,res)=>{
 })
 
 //set up the user logout route as a private route
-app.delete('/users/me/logout',authenticateToken,(req,res)=>{
+app.delete('/users/me/token',authenticateToken,(req,res)=>{
     const user = req.user;
     user.deleteUserAuthToken(req.token).then(()=>{
         res.status(200).send('User logged out!');
