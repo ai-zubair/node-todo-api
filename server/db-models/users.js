@@ -106,6 +106,17 @@ UserSchema.statics.findByCredentials = function(email,password){
     })
 }
 
+//user instance method for removing a login token for the user when the user chooses to logout
+UserSchema.methods.deleteUserAuthToken = function(token){
+    const user = this;
+    return user.update({
+        $pull : {
+            tokens : {
+                token 
+            }
+        }
+    })
+}
 //creating a users model
 const Users = mongoose.model('Users',UserSchema);
 

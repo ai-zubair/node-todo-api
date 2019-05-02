@@ -135,6 +135,17 @@ app.post('/users/login',(req,res)=>{
     })
 })
 
+//set up the user logout route as a private route
+app.delete('/users/me/token',authenticateToken,(req,res)=>{
+    const user = req.user;
+    user.deleteUserAuthToken(req.token).then(()=>{
+        res.status(200).send('User logged out!');
+    }).catch(err=>{
+        res.status(400).send('Failed to log out!');
+    });
+
+})
+
 //set up the server to listen for connections on the specified port
 app.listen(PORT,()=>{
     console.log(`Server has been fired at localhost:${PORT}`)
