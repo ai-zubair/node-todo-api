@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 //creating a schema for the documents of the todo collection
 const TodosSchema = new mongoose.Schema({
+    _creator : {
+        type : mongoose.Schema.Types.ObjectId,
+        required : true 
+    },
     text:{
         type: String,
         minlength : 1,

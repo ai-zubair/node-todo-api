@@ -21,12 +21,13 @@ const PORT = process.env.PORT;
 //create the express appp
 var app =  express();
 
-//using the body parser middleware function to parse request bodies as json
+//using the body parser middleware function to parse request bodies as JSON into JS objects
 app.use(bodyParser.json());
 
 //set up POST route for adding todos to the TODO's collectio for the database
-app.post('/todos',(req,res,next)=>{
+app.post('/todos',authenticateToken,(req,res,next)=>{
     const newTodo = new Todos({
+        _creator : req.user._id,
         text : req.body.text,
         status : req.body.status
     })
@@ -38,8 +39,10 @@ app.post('/todos',(req,res,next)=>{
 })
 
 //set up GET route for fetching todos from the todos collection
-app.get('/todos',(req,res,next)=>{
-    Todos.find().then( todos=>{
+app.get('/todos',authenticateToken,(req,res,next)=>{
+    Todos.find({
+        _creator : req.user._id
+    }).then( todos=>{
         res.send({
             todos
         })
@@ -49,12 +52,15 @@ app.get('/todos',(req,res,next)=>{
 })
 
 //set up GET route for fetching todo for a given id
-app.get('/todos/:id',(req,res,next)=>{
+app.get('/todos/:id',authenticateToken,(req,res,next)=>{
     const taskID = req.params.id;
     if(!ObjectID.isValid(taskID)){
         res.status(404).send("Oops! Looks like you entered an invalid ID");
     }
-    Todos.findById(taskID).then((task)=>{
+    Todos.findOne({
+        _id : taskID,
+        _creator : req.user._id
+    }).then((task)=>{
         if(!task){
             res.status(404).send("Oops! No such records were found!")
         }
@@ -65,12 +71,15 @@ app.get('/todos/:id',(req,res,next)=>{
 })
 
 //set up delete route for deleting a given todo using id
-app.delete('/todos/:id',(req,res,next)=>{
+app.delete('/todos/:id',authenticateToken,(req,res,next)=>{
     const taskID = req.params.id;
     if(!ObjectID.isValid(taskID)){
         res.status(204).send("Oops! Looks like you entered an invalid ID");
     }
-    Todos.findByIdAndDelete(taskID).then((task)=>{
+    Todos.findOneAndDelete({
+        _id : taskID,
+        _creator : req.user._id
+    }).then((task)=>{
         if(!task){
             res.status(204).send("Oops! No such task were found!")
         }
@@ -81,7 +90,7 @@ app.delete('/todos/:id',(req,res,next)=>{
 })
 
 //set up path route for updating a resource by id
-app.patch('/todos/:id',(req,res,next)=>{
+app.patch('/todos/:id',authenticateToken,(req,res,next)=>{
     const taskID = req.params.id;
     const reqBody = _.pick(req.body,['status','text']);
     if(!ObjectID.isValid(taskID)){
@@ -92,7 +101,10 @@ app.patch('/todos/:id',(req,res,next)=>{
     }else{
         reqBody.status = false ; 
     }
-    Todos.findByIdAndUpdate(taskID,{ $set : reqBody }, { new : true } ).then( updatedTask =>{
+    Todos.findOneAndUpdate({
+        _id : taskID,
+        _creator : req.user._id
+    },{ $set : reqBody }, { new : true } ).then( updatedTask =>{
         if(!updatedTask){
             res.status(204).send("No such task was found")
         }
@@ -136,7 +148,7 @@ app.post('/users/login',(req,res)=>{
 })
 
 //set up the user logout route as a private route
-app.delete('/users/me/token',authenticateToken,(req,res)=>{
+app.delete('/users/me/logout',authenticateToken,(req,res)=>{
     const user = req.user;
     user.deleteUserAuthToken(req.token).then(()=>{
         res.status(200).send('User logged out!');
