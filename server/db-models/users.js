@@ -49,7 +49,7 @@ UserSchema.methods.generateAuthToken = function (){
         token
     });
 
-    return user.save().then(() => token); //to prevent handling of save() redundantly
+    return user.save().then(() => Promise.resolve(token)); //to prevent handling of save() redundantly
 }
 
 //overriding the default toJSON method for user instances to show only the desired properties to the user
@@ -86,6 +86,26 @@ UserSchema.pre('save',function(next){
         next();
     }
 })
+
+//model method to find a user by credentials
+UserSchema.statics.findByCredentials = function(email,password){
+    const Users = this;
+    return Users.findOne({
+        email
+    }).then( user =>{
+        if(!user){
+            return Promise.reject('User Authentication Failed');
+        }
+        return bcrypt.compare(password,user.password).then(res=>{
+            if(res){
+                return Promise.resolve(user);
+            }else{
+                return Promise.reject('User Authentication Failed');
+            }
+        })
+    })
+}
+
 //creating a users model
 const Users = mongoose.model('Users',UserSchema);
 

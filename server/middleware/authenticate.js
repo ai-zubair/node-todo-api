@@ -1,6 +1,6 @@
 const { Users } = require('../db-models/users');
 
-const authenticate = (req,res,next)=>{
+const authenticateToken = (req,res,next)=>{
     const token = req.header('x-auth');
     Users.findByToken(token).then( user => {
         if(!user){
@@ -15,5 +15,5 @@ const authenticate = (req,res,next)=>{
 }
 
 module.exports = {
-    authenticate
+    authenticateToken
 }

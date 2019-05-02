@@ -13,7 +13,7 @@ const { ObjectID } = require('mongodb'); //validate the object id passed in the 
 const { mongoose } = require('./db/mongoose'); //requiring the confgiured mongoose variable
 const { Todos } = require('./db-models/todos'); //Todos model for the db
 const { Users } = require('./db-models/users'); //Users model for the db
-const { authenticate } = require('./middleware/authenticate'); //Auth middleware for verifying o user token
+const { authenticateToken } = require('./middleware/authenticate'); //Auth middleware for verifying o user token
 
 //configuring the prot for heroku
 const PORT = process.env.PORT;
@@ -119,8 +119,20 @@ app.post('/users',(req,res)=>{
 })
 
 //set up aprivate route for the app
-app.get('/users/me',authenticate,(req,res)=>{
+app.get('/users/me',authenticateToken,(req,res)=>{
     res.send(req.user);
+})
+
+//set up the user login route
+app.post('/users/login',(req,res)=>{
+    const userCred = _.pick(req.body,['email','password']);
+    Users.findByCredentials(userCred.email,userCred.password).then(user=>{
+        return user.generateAuthToken();
+    }).then(token=>{
+        res.header({'x-auth':token}).send('User logged in!');
+    }).catch(err=>{
+        res.status(401).send(err)
+    })
 })
 
 //set up the server to listen for connections on the specified port
